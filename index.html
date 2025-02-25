@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>动态表情告白页</title>
+    <style>
+        /* 保持原有样式不变 */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: #ffe6f2 linear-gradient(45deg, #ffb3d9, #ffe6f2);
+            font-family: 'Microsoft YaHei', sans-serif;
+        }
+
+        .container {
+            text-align: center;
+            padding: 20px;
+            max-width: 600px;
+            width: 90%;
+        }
+
+        /* 新增表情容器样式 */
+        .character {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 20px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(255,51,133,0.2);
+        }
+
+        .gif-emoji {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: opacity 0.5s;
+        }
+
+        /* 其他样式保持不变 */
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="character" id="character">
+            <img src="https://raw.githubusercontent.com/wsWsrr/luoxiaoli/main/.github/workflows/emoji1.gif" 
+                 class="gif-emoji"
+                 alt="初始表情">
+        </div>
+        <h1>你愿意和我一起创造美好回忆吗？🌠</h1>
+        <div class="buttons">
+            <button id="yesBtn" onclick="showSuccess()">我 愿 意</button>
+            <button id="noBtn" onmouseover="moveButton()" ontouchstart="moveButton()" onclick="shrinkButton()">再考虑下</button>
+        </div>
+        <div id="success">
+            🎉 我们的旅程即将开始！<br>
+            准备好接收每日惊喜了吗？🎁
+        </div>
+    </div>
+
+    <script>
+        // 配置表情路径（使用您的GitHub路径）
+        const basePath = 'https://raw.githubusercontent.com/wsWsrr/luoxiaoli/main/.github/workflows/';
+        
+        const emotions = Array.from({length: 9}, (_, i) => 
+            `${basePath}emoji${i+1}.gif`);
+        
+        const successEmoji = `${basePath}success.gif`;
+
+        let currentLevel = 0;
+        const maxLevel = emotions.length;
+        const character = document.getElementById('character');
+
+        // 预加载函数
+        function preloadImages() {
+            emotions.concat(successEmoji).forEach(src => {
+                new Image().src = src;
+            });
+        }
+
+        // 初始化预加载
+        preloadImages();
+
+        function updateEmotion() {
+            currentLevel = Math.min(currentLevel + 1, maxLevel);
+            
+            const newImg = new Image();
+            newImg.className = 'gif-emoji';
+            newImg.src = emotions[currentLevel - 1];
+            
+            character.innerHTML = '';
+            character.appendChild(newImg);
+
+            // 动态调整按钮
+            const progress = currentLevel / maxLevel;
+            document.getElementById("noBtn").style.transform = 
+                `scale(${1 - progress * 0.8})`;
+            document.getElementById("yesBtn").style.transform = 
+                `scale(${1 + progress * 0.8})`;
+
+            if(currentLevel === maxLevel) showSuccess();
+        }
+
+        function showSuccess() {
+            const successImg = new Image();
+            successImg.className = 'gif-emoji';
+            successImg.src = successEmoji;
+            
+            character.innerHTML = '';
+            character.appendChild(successImg);
+
+            document.querySelector(".buttons").style.display = "none";
+            document.getElementById("success").style.display = "block";
+            document.querySelector("h1").style.display = "none";
+
+            createHearts();
+        }
+
+        // 保持其他函数不变
+    </script>
+</body>
+</html>
